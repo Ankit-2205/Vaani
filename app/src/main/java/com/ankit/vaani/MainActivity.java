@@ -1,6 +1,7 @@
 package com.ankit.vaani;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,6 +10,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.database.CursorWindow;
+import java.lang.reflect.Field;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -49,6 +52,14 @@ public class MainActivity extends AppCompatActivity {
                 == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[] {Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        }
+
+        try {
+            @SuppressLint("DiscouragedPrivateApi") Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
+            field.setAccessible(true);
+            field.set(null, 20 * 1024 * 1024);
+        } catch (Exception e) {
+            Log.e(TAG, "error setting sCursorWindowSize", e);
         }
 
         imageRepo = new ImageRepoImpl(getApplicationContext());
